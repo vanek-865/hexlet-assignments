@@ -24,18 +24,17 @@ public class Application {
 
     // BEGIN
     @Autowired
-    private UserProperties userProperties;
+    private UserProperties usersInfo;
 
     @GetMapping("/admins")
     public List<String> admins() {
-        List<User> usersList = userProperties.getAdmins().stream().flatMap(admin -> users.stream()
-                .filter(u -> admin.equals(u.getEmail()))
-                .toList().stream()).collect(Collectors.toList());
+        List<String> adminEmails = usersInfo.getAdmins();
 
-        List<String> userName = new ArrayList<>();
-        usersList.sort(Comparator.comparing(User::getName));
-        usersList.stream().filter(user -> !userName.contains(user.getName())).forEach(user -> userName.add(user.getName()));
-        return userName;
+        return users.stream()
+                .filter(u -> adminEmails.contains(u.getEmail()))
+                .map(User::getName)
+                .sorted()
+                .toList();
     }
     // END
 
