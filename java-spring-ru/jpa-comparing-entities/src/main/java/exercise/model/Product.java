@@ -11,12 +11,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 // BEGIN
+@Getter
+@Setter
+@Entity
+@Table(name = "product")
+@EqualsAndHashCode(of = {"title", "price"})
 public class Product {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    Long id;
-    String title;
+    private long id;
+
+    private String title;
+    private int price;
 
 }
 
