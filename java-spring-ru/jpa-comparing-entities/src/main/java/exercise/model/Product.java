@@ -11,5 +11,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 // BEGIN
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    Long id;
+    String title;
+
+}
 
 // END
