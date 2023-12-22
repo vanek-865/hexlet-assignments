@@ -43,12 +43,13 @@ public class ProductsController {
     }
 
     @PutMapping("/{id}")
-    public Product update(@PathVariable Long id, @RequestBody Product product) {
+    public Product update(@PathVariable Long id, @RequestBody Product requestBody) {
         Product product1 = productRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Product with id " + id + " not found"));
 
-        product1.setPrice(product.getPrice());
-        product1.setTitle(product.getTitle());
+        product1.setPrice(requestBody.getPrice());
+        product1.setTitle(requestBody.getTitle());
+        productRepository.save(product1);
         return product1;
     }
 
