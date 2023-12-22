@@ -1,11 +1,11 @@
 package exercise.controller;
 
+import exercise.exception.ResourceAlreadyExistsException;
 import exercise.exception.ResourceNotFoundException;
 import exercise.model.Product;
 import exercise.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,19 +32,12 @@ public class ProductsController {
 
     // BEGIN
     @PostMapping(path = "")
-    public ResponseEntity<String> update(@RequestBody Product productData) {
-        List<Product> products = productRepository.findAll().stream().filter(p -> (p.equals(productData))).toList();
-
-        if (products.isEmpty()) {
-            productRepository.save(productData);
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(productData.toString());
-        }else
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("Product with already exists, id=" + products.get(0).getId());
-
+    @ResponseStatus(HttpStatus.CREATED)
+    public Product create(@RequestBody Product product) {
+        if (productRepository.findAll().contains(product)) {
+            throw new ResourceAlreadyExistsException("Product " + product.getTitle() + " already exists");
+        }
+        return productRepository.save(product);
     }
     // END
 
