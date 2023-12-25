@@ -25,7 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // BEGIN
-
+@SpringBootTest
+@AutoConfigureMockMvc
 // END
 class ApplicationTest {
 
@@ -72,6 +73,76 @@ class ApplicationTest {
     }
 
     // BEGIN
+    @Test
+    public void showTest() throws Exception {
+        Task generatedTask = generateTask();
+        taskRepository.save(generatedTask);
 
+        var request = get("/tasks/" + generatedTask.getId())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+        Task task = taskRepository.findById(generatedTask.getId()).get();
+        assertThat(task.getTitle()).isEqualTo((generatedTask.getTitle()));
+        assertThat(task.getDescription()).isEqualTo((generatedTask.getDescription()));
+    }
+
+    @Test
+    public void createTest() throws Exception {
+
+        Task generatedTask = generateTask();
+
+        var request = post("/tasks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(generatedTask));
+
+        var result = mockMvc.perform(request)
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        var body = result.getResponse().getContentAsString();
+        assertThatJson(body).isObject().containsEntry("description", generatedTask.getDescription());
+        assertThatJson(body).isObject().containsEntry("title", generatedTask.getTitle());
+    }
+
+    @Test
+    public void updateTest() throws Exception {
+
+        Task generatedTask = generateTask();
+        taskRepository.save(generatedTask);
+
+        var data = new HashMap<>();
+        data.put("description", "New description");
+        data.put("title", "New title");
+
+        var request = put("/tasks/" + generatedTask.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                // ObjectMapper конвертирует Map в JSON
+                .content(om.writeValueAsString(data));
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+        Optional<Task> task = taskRepository.findById(generatedTask.getId());
+        assertThat(task.get().getDescription()).isEqualTo(("New description"));
+        assertThat(task.get().getTitle()).isEqualTo(("New title"));
+    }
+
+    @Test
+    public void deleteTest() throws Exception {
+
+        Task generatedTask = generateTask();
+        taskRepository.save(generatedTask);
+
+        var request = delete("/tasks/" + generatedTask.getId())
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+        assertThat(taskRepository.findById(generatedTask.getId())).isEmpty();
+    }
     // END
 }
