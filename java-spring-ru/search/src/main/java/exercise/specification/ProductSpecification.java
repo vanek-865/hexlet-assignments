@@ -15,7 +15,7 @@ public class ProductSpecification {
         return withTitleCont(params.getTitleCont())
                 .and(withCategoryId(params.getCategoryId()))
                 .and(withPriceLt(params.getPriceLt()))
-                .and(withPriceeGt(params.getPriceGt()))
+                .and(withPriceGt(params.getPriceGt()))
                 .and(withRatingGt(params.getRatingGt()));
     }
 
@@ -34,7 +34,7 @@ public class ProductSpecification {
         return (root, query, cb) -> price == null ? cb.conjunction() : cb.lessThan(root.get("price"), price);
     }
 
-    private Specification<Product> withPriceeGt(Integer price){
+    private Specification<Product> withPriceGt(Integer price){
 
         return (root, query, cb) -> price == null ? cb.conjunction() : cb.greaterThan(root.get("price"), price);
     }
