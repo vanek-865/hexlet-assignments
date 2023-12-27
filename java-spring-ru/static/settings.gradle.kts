@@ -1,3 +1,3 @@
-rootProject.name = "one-to-many"
+rootProject.name = "static"
 // spring.jpa.generate-ddl = true
 // spring.jpa.hibernate.ddl-auto
