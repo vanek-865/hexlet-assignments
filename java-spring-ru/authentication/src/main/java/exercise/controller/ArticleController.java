@@ -1,13 +1,14 @@
 package exercise.controller;
 
-import java.util.List;
-
 import exercise.dto.ArticleCreateDTO;
 import exercise.dto.ArticleDTO;
 import exercise.dto.ArticleUpdateDTO;
+import exercise.exception.ResourceNotFoundException;
 import exercise.mapper.ArticleMapper;
+import exercise.repository.ArticleRepository;
 import exercise.repository.UserRepository;
 import exercise.utils.UserUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import exercise.exception.ResourceNotFoundException;
-import exercise.repository.ArticleRepository;
-import jakarta.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/articles")
@@ -41,7 +40,16 @@ public class ArticleController {
 
 
     // BEGIN
-    
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ArticleDTO create(@RequestBody ArticleCreateDTO articleCreateDTO) {
+
+        var article = articleMapper.map(articleCreateDTO);
+        article.setAuthor(userUtils.getCurrentUser());
+        articleRepository.save(article);
+
+        return articleMapper.map(article);
+    }
     // END
 
     @GetMapping("")
