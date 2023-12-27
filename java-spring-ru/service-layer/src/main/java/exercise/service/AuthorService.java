@@ -21,13 +21,13 @@ public class AuthorService {
     @Autowired
     private AuthorRepository authorRepository;
 
-    public List<AuthorDTO> getAll(int page, int size){
+    public List<AuthorDTO> getAll(int page, int size) {
 
         var authors = authorRepository.findAll(PageRequest.of(page - 1, size));
         return authors.stream().map(authorMapper::map).toList();
     }
 
-    public AuthorDTO create (AuthorCreateDTO authorCreateDTO){
+    public AuthorDTO create(AuthorCreateDTO authorCreateDTO) {
 
         var author = authorMapper.map(authorCreateDTO);
         authorRepository.save(author);
@@ -47,7 +47,7 @@ public class AuthorService {
 
         var author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found: " + id));
-        authorMapper.update(authorUpdateDTO,author);
+        authorMapper.update(authorUpdateDTO, author);
         authorRepository.save(author);
 
         return authorMapper.map(author);
