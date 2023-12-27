@@ -6,6 +6,7 @@ import exercise.dto.AuthorUpdateDTO;
 import exercise.service.AuthorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,38 @@ public class AuthorsController {
     private AuthorService authorService;
 
     // BEGIN
-    
+    @GetMapping("")
+    public List<AuthorDTO> index (@RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "10") int size) {
+
+        return authorService.getAll(page, size);
+    }
+
+    @GetMapping("/{id}")
+    public AuthorDTO show (@PathVariable Long id) {
+
+        return authorService.findById(id);
+    }
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthorDTO create (@Valid @RequestBody AuthorCreateDTO authorCreateDTO) {
+
+        return authorService.create(authorCreateDTO);
+    }
+
+    @PutMapping("/{id}")
+    public AuthorDTO update (@PathVariable Long id,
+                             @Valid @RequestBody AuthorUpdateDTO authorUpdateDTO) {
+
+        return authorService.update(id, authorUpdateDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete (@PathVariable Long id) {
+
+         authorService.delete(id);
+    }
+
     // END
 }
